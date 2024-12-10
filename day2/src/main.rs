@@ -17,7 +17,7 @@ fn parse_input() {
         let mut safe = is_report_safe(&report);
 
         if !safe {
-            // Try removing each element to see if the sequence becomes safe
+            // Try removing each element to see if the report becomes safe
             for i in 0..report.len() {
                 let mut modified_report = report.clone();
                 modified_report.remove(i);

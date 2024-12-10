@@ -36,7 +36,6 @@ fn parse_line(line: String) -> i32 {
     for cap in re.captures_iter(&line) {
         let first_number: i32 = cap[1].parse().unwrap();
         let second_number: i32 = cap[2].parse().unwrap();
-        // println!("Numbers: {} and {}", first_number, second_number);
         line_total_sum += first_number * second_number;
     }
 
