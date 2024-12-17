@@ -3,11 +3,22 @@ use std::{
     io::{self, BufRead},
     path::Path,
 };
+mod part_two;
 
 type RowsAndCols = (Vec<Vec<char>>, Vec<Vec<char>>);
+
+/*
+Part two unfinished
+
+*/
 fn main() {
     let result = read_file();
     println!("{:?}", result);
+
+    match part_two::read_file() {
+        Ok(val) => println!("Part two result: {}", val),
+        Err(e) => eprintln!("Error in read file {}", e),
+    }
 }
 
 fn read_file() -> io::Result<(i32)> {
@@ -28,7 +39,7 @@ fn read_file() -> io::Result<(i32)> {
     word_count += bottom_left_top_right(&rows, word);
     word_count += bottom_right_top_left(&rows, word);
     // let sum = rows_word_count + cols_word_count;
-    println!("{}", word_count);
+    // println!("{}", word_count);
     Ok(word_count)
 }
 fn create_grid(lines: &Vec<String>) -> RowsAndCols {
@@ -76,7 +87,7 @@ fn find_word(characters: &Vec<Vec<char>>, word: &str) -> i32 {
             }
         }
     }
-    println!("word count{}", word_count);
+    // println!("word count{}", word_count);
     word_count
 }
 
@@ -85,9 +96,9 @@ fn top_left_bottom_right(rows: &Vec<Vec<char>>, word: &str) -> i32 {
     //remove one because it's going to be added by the index where char == 'X' in inner loop
     let word_offset = word.len() - 1;
     let mut word_count = 0;
-    println!("rows length: {:?}", rows.len());
+    // println!("rows length: {:?}", rows.len());
     for (vec_index, vec) in rows.iter().enumerate() {
-        println!("Vec index: {:?}", vec_index);
+        // println!("Vec index: {:?}", vec_index);
 
         for (index, char) in vec.iter().enumerate() {
             let mut search_word: Vec<char> = Vec::new();

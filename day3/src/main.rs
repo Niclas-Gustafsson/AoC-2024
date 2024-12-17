@@ -19,9 +19,34 @@ fn read_file() -> io::Result<i32> {
 
     let reader = io::BufReader::new(file);
     let mut total_sum: i32 = 0;
+    let mut disable_multiply = false;
+
     for line in reader.lines() {
         match line {
-            Ok(content) => total_sum += parse_line_two(content),
+            Ok(content) => {
+                // total_sum += parse_line_two(content);
+
+                let mut line_total: i32 = 0;
+
+                let re = Regex::new(r"(do\(\))|(don't\(\))|mul\((\d{1,3}),\s*(\d{1,3})\)").unwrap();
+
+                for cap in re.captures_iter(&content) {
+                    if cap[0].to_string().starts_with("mul") && !disable_multiply {
+                        let num1 = cap.get(3).expect("No group 3, but mul matched").as_str();
+                        let num2 = cap.get(4).expect("No group 4, but mul matched").as_str();
+
+                        let val1: i32 = num1.parse().unwrap();
+                        let val2: i32 = num2.parse().unwrap();
+
+                        line_total += val1 * val2;
+                    } else if let Some(_) = cap.get(1) {
+                        disable_multiply = false;
+                    } else if let Some(_) = cap.get(2) {
+                        disable_multiply = true;
+                    }
+                }
+                total_sum += line_total;
+            }
             Err(e) => eprintln!("Error reading line: {}", e),
         }
     }
@@ -49,30 +74,18 @@ fn parse_line_two(line: String) -> i32 {
 
     let mut disable_multiply: bool = false;
     for cap in re.captures_iter(&line) {
-        let capture: String = cap[0].to_string();
+        if cap[0].to_string().starts_with("mul") && !disable_multiply {
+            let num1 = cap.get(3).expect("No group 3, but mul matched").as_str();
+            let num2 = cap.get(4).expect("No group 4, but mul matched").as_str();
 
-        if capture == "do()" {
+            let val1: i32 = num1.parse().unwrap();
+            let val2: i32 = num2.parse().unwrap();
+
+            line_total += val1 * val2;
+        } else if let Some(_) = cap.get(1) {
             disable_multiply = false;
-        } else if capture == "don't()" {
+        } else if let Some(_) = cap.get(2) {
             disable_multiply = true;
-        } else if capture.starts_with("mul(") {
-            if !disable_multiply {
-                println!("disable_multiply is: {}", disable_multiply);
-                let num1 = cap
-                    .get(3)
-                    .expect("No group 3, but mul(...) matched")
-                    .as_str();
-                let num2 = cap
-                    .get(4)
-                    .expect("No group 4, but mul(...) matched")
-                    .as_str();
-                println!("Num 1: {:?}", num1);
-                println!("Num 2: {:?}", num2);
-
-                let val1: i32 = num1.parse().unwrap();
-                let val2: i32 = num2.parse().unwrap();
-                line_total += val1 * val2;
-            }
         }
     }
     line_total
